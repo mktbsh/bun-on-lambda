@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  bun compiled sfe binary on Lambda demo
+  
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  BunAppFunction:
+    DeletionPolicy: Delete
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      MemorySize: 256
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          PORT: "8000"
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:753240598075:layer:LambdaAdapterLayerX86:22
+      FunctionUrlConfig:
+        AuthType: NONE
+    Metadata:
+      BuildMethod: makefile
+
+Outputs:
+  FunctionUrl:
+    Value: !GetAtt BunAppFunctionUrl.FunctionUrl
